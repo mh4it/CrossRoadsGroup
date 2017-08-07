@@ -131,28 +131,19 @@
 					
 					<h1 class="section-title">My Repositories<span class="main-color">1</span></h1>
 					
-					<!--<div class="text-center">
-						<div class="btn-group">
-							<button type="button" href="#front-end" class="btn btn-default toggle-tabs active">Front End</button>
-							<button type="button" href="#back-end" class="btn btn-default toggle-tabs">Back End</button>
-						</div>
-					</div>-->
-					
-					<div class="text-center">
-						<h1>Select to see history</h1>
+					<div class="row">
+						<h1>Select Repository</h1>
 						<p>
-						
-						<!--<input type="text" name="ghusername" id="ghusername" placeholder="Github username...">
-						
-						<a href="#" id="ghsubmitbtn">Pull User Data</a>-->
-						
-						<div id="ghapidata" class="clearfix"></div>
+							<div id="ghapidata" class="clearfix"></div>
 						</p>
+					</div>
+					
+					<div class="row">
+							<div id="ghapidata2" class="clearfix"></div>
 					</div>
 					
 					
 				</div>
-			
 			
 			</section>
 				
@@ -517,7 +508,7 @@
 			</div>
 			
 		</div><!-- /.modal -->
-			
+		
 		
 		<!-- ==============================================
 		SCRIPTS
@@ -532,7 +523,7 @@ $(document).ready(function(){
     var username = 'mh4it';
     var requri   = 'https://api.github.com/users/'+username;
     var repouri  = 'https://api.github.com/users/'+username+'/repos';
-    
+	
     requestJSON(requri, function(json) {
       if(json.message == "Not Found" || username == '') {
         $('#ghapidata').html("<h2>No User Info Found</h2>");
@@ -551,7 +542,7 @@ $(document).ready(function(){
         
         if(fullname == undefined) { fullname = username; }
         
-        var outhtml = '<h2>'+fullname+' <span class="smallname">(@<a href="'+profileurl+'" target="_blank">'+username+'</a>)</span></h2>';
+        var outhtml = '<div class="row"><div class="col-lg-12"><h2>'+fullname+' <span class="smallname">(@<a href="'+profileurl+'" target="_blank">'+username+'</a>)</span></h2>';
         outhtml = outhtml + '<div class="ghcontent"><div class="avi"><a href="'+profileurl+'" target="_blank"><img src="'+aviurl+'" width="80" height="80" alt="'+username+'"></a></div>';
         outhtml = outhtml + '<p>Followers: '+followersnum+' - Following: '+followingnum+'<br>Repos: '+reposnum+'</p></div>';
         outhtml = outhtml + '<div class="repolist clearfix">';
@@ -562,20 +553,81 @@ $(document).ready(function(){
           outputPageContent();                
         });          
         
+		//var repo_commits = [];
+		//var outhtml2 = '<h2></h2><br><div class="row">';
+				
         function outputPageContent() {
           if(repositories.length == 0) { outhtml = outhtml + '<p>No repos!</p></div>'; }
           else {
             outhtml = outhtml + '<p><strong>Repos List:</strong></p> <ul>';
             $.each(repositories, function(index) {
-              outhtml = outhtml + '<li><a href="'+repositories[index].html_url+'" target="_blank">'+repositories[index].name + '</a></li>';
+				outhtml = outhtml + '<li><a href="'+repositories[index].html_url+'" target="_blank">'+repositories[index].name + '</a></li>';
+				//repo_commits.push('https://api.github.com/repos/'+username+'/'+repositories[index].name+'/commits');
+				
             });
-            outhtml = outhtml + '</ul></div>'; 
+			/*$.each(repo_commits, function(index, value) {
+				outhtml = outhtml + '<br>' + repo_commits[index] + '<br>';
+			});*/
+            outhtml = outhtml + '</ul></div></div></div>'; 
           }
           $('#ghapidata').html(outhtml);
         } // end outputPageContent()
+		
+		//Jquery / json problem, can't iterate through all repos
+		/*var = repo_unit;
+		var commits_array;
+		$.each(repo_commits, function(index, value) {
+			repo_unit = repo_commits[index];
+			$.getJSON(repo_unit, function(json){
+				commits_array = json;
+			});*/
+		repo_commit = 'https://api.github.com/repos/'+username+'/CrossRoadsGroup/commits';
+        var repositories_2;
+		var target = 1;
+        $.getJSON(repo_commit, function(json){
+          repositories_2 = json;
+		  outputPageContent_2();
+        });  
+        function outputPageContent_2() {
+          if(repositories_2.length == 0) { outhtml2 = outhtml2 + '<p>No Commits!</p></div>'; }
+          else {        
+		  //Begin Output HTML of Commits JSON element via loop
+		  $.each(repositories_2, function(index) {
+				outhtml2 = outhtml2 + '<button type="button" class="btn btn-info" data-toggle="collapse" data-target="'+target+'">' + repositories_2[index]. + '</button>';
+				outhtml2 = outhtml2 + '<div id="'+target+'" class="collapse">';
+				/*	    <!-- begin col-3 -->  */			
+				//outhtml2 = outhtml2 + '<div class="col-md-3 col-sm-6">';
+				outhtml2 = outhtml2 + '<div class="widget widget-stats bg-green">';
+				outhtml2 = outhtml2 + '<div class="stats-icon stats-icon-lg"><i class="fa fa-globe fa-fw"></i></div>';
+				outhtml2 = outhtml2 + '<div class="stats-title">TODAYS VISITS</div>';
+				outhtml2 = outhtml2 + '<div class="stats-number">7,842,900</div>';
+				outhtml2 = outhtml2 + '<div class="stats-progress progress">';
+				outhtml2 = outhtml2 + '<div class="progress-bar" style="width: 70.1%;"></div>';
+				outhtml2 = outhtml2 + '</div>';
+				outhtml2 = outhtml2 + '<div class="stats-desc">Better than last week (70.1%)</div>';
+				outhtml2 = outhtml2 + '</div>';
+				outhtml2 = outhtml2 + '</div>';			
+				outhtml2 = outhtml2 + '</div>'; //Close div target
+				/*		<!-- end col-3 -->  */		
+				target++;
+			});
+		 }  //end statement
+		$('#ghapidata2').html(outhtml2);
+		}
+		
       } // end else statement
     }); // end requestJSON Ajax call
   }); // end click event handler
+
+  
+/*$(function(){
+  $('#ghsubmitbtn').on('click', function(e){
+    e.preventDefault();
+    $('#ghapidata2').html('<div id="loader"><img src="assets/css/loader.gif" alt="loading..."></div>');
+	
+	)};
+)};*/
+  
   
   function requestJSON(url, callback) {
     $.ajax({
@@ -585,6 +637,8 @@ $(document).ready(function(){
       }
     });
   }
+  
+  
 /*});*/
 </script>		
 		
