@@ -48,7 +48,7 @@
 	<body data-spy="scroll" data-target="#main-nav" data-offset="400">
 	
 		<!--=== PAGE PRELOADER ===-->
-		<div id="page-loader"><span class="page-loader-gif"></span></div>
+		<<!--<div id="page-loader"><span class="page-loader-gif"></span></div>-->
 		
 		<!-- ==============================================
 		MAIN NAV
@@ -129,19 +129,12 @@
 			
 				<div class="container">
 					
-					<h1 class="section-title">My Repositories<span class="main-color">1</span></h1>
-					
 					<div class="row">
-						<h1>Select Repository</h1>
-						<p>
+						<div class="col-md-12 text-center">
+							<h2 class="scrollimation fade-down d3"><span class="main-color text-center">C</span>ross<span class="main-color">R</span>oads <span class="main-color">R</span>epository <span class="main-color">C</span>ommit <span class="main-color">H</span>istory</h2>
 							<div id="ghapidata" class="clearfix"></div>
-						</p>
+						</div>
 					</div>
-					
-					<div class="row">
-							<div id="ghapidata2" class="clearfix"></div>
-					</div>
-					
 					
 				</div>
 			
@@ -205,18 +198,8 @@
 				<div class="container">
 				
 					<h1 class="section-title">My portfolio<span class="main-color">4</span></h1>
-					<p class="subtitle">See what people say about my work</p>
-					
 					<!--==== Portfolio Filters ====-->
 					
-					<div class="text-center scrollimation fade-up">
-						<div id="filter-works" class="btn-group">
-							<button data-filter="*" type="button" class="btn btn-default active">All Items<span class="project-count"></span></button>
-							<button data-filter=".web" type="button" class="btn btn-default">Web<span class="project-count"></span></button>
-							<button data-filter=".print" type="button" class="btn btn-default">Print<span class="project-count"></span></button>
-							<button data-filter=".video" type="button" class="btn btn-default">Video<span class="project-count"></span></button>
-						</div>
-					</div>
 					
 				</div>	
 				
@@ -516,14 +499,13 @@
 		
 <script type="text/javascript">
 $(document).ready(function(){
-  /*$('#ghsubmitbtn').on('click', function(e){
-    e.preventDefault();*/
-    $('#ghapidata').html('<div id="loader"><img src="assets/css/loader.gif" alt="loading..."></div>');
+    $('#ghapidata').html('<div id="loader"><img src="css/loader.gif" alt="loading..."></div>');
     
     var username = 'mh4it';
     var requri   = 'https://api.github.com/users/'+username;
-    var repouri  = 'https://api.github.com/users/'+username+'/repos';
-	
+    //var repouri  = 'https://api.github.com/users/'+username+'/repos';
+	var repo_commit = 'https://api.github.com/repos/'+username+'/CrossRoadsGroup/commits';		
+    
     requestJSON(requri, function(json) {
       if(json.message == "Not Found" || username == '') {
         $('#ghapidata').html("<h2>No User Info Found</h2>");
@@ -542,94 +524,53 @@ $(document).ready(function(){
         
         if(fullname == undefined) { fullname = username; }
         
-        var outhtml = '<div class="row"><div class="col-lg-12"><h2>'+fullname+' <span class="smallname">(@<a href="'+profileurl+'" target="_blank">'+username+'</a>)</span></h2>';
+        var outhtml = '<h2>'+fullname+' <span class="smallname">(@<a href="'+profileurl+'" target="_blank">'+username+'</a>)</span></h2>';
         outhtml = outhtml + '<div class="ghcontent"><div class="avi"><a href="'+profileurl+'" target="_blank"><img src="'+aviurl+'" width="80" height="80" alt="'+username+'"></a></div>';
         outhtml = outhtml + '<p>Followers: '+followersnum+' - Following: '+followingnum+'<br>Repos: '+reposnum+'</p></div>';
         outhtml = outhtml + '<div class="repolist clearfix">';
         
         var repositories;
-        $.getJSON(repouri, function(json){
+		var target = 'target1';
+
+        $.getJSON(repo_commit, function(json){
           repositories = json;   
           outputPageContent();                
         });          
         
-		//var repo_commits = [];
-		//var outhtml2 = '<h2></h2><br><div class="row">';
-				
         function outputPageContent() {
           if(repositories.length == 0) { outhtml = outhtml + '<p>No repos!</p></div>'; }
           else {
-            outhtml = outhtml + '<p><strong>Repos List:</strong></p> <ul>';
-            $.each(repositories, function(index) {
-				outhtml = outhtml + '<li><a href="'+repositories[index].html_url+'" target="_blank">'+repositories[index].name + '</a></li>';
-				//repo_commits.push('https://api.github.com/repos/'+username+'/'+repositories[index].name+'/commits');
-				
-            });
-			/*$.each(repo_commits, function(index, value) {
-				outhtml = outhtml + '<br>' + repo_commits[index] + '<br>';
-			});*/
-            outhtml = outhtml + '</ul></div></div></div>'; 
+		  //Begin Output HTML of Commits JSON element via loop
+		  $.each(repositories, function(index) {
+				outhtml = outhtml + '<div class="col-md-10 col-sm-10">';		  
+				outhtml = outhtml + '<button type="button" class="btn btn-info" data-toggle="collapse" data-target="'+target+'">' + repositories[index].commit.author.name + ' | ' +repositories[index].commit.author.date + ' | ' + repositories[index].committer.message + '</button>';
+				outhtml = outhtml + '<div id="'+target+'" class="collapse">';
+				/*	    <!-- begin col-3 -->  */			
+				outhtml = outhtml + '<div class="widget widget-stats bg-green">';
+				outhtml = outhtml + '<div class="stats-icon stats-icon-lg"><i class="fa fa-globe fa-fw"></i></div>';
+				outhtml = outhtml + '<div class="stats-title">TODAYS VISITS</div>';
+				outhtml = outhtml + '<div class="stats-number">7,842,900</div>';
+				outhtml = outhtml + '<div class="stats-progress progress">';
+				outhtml = outhtml + '<div class="progress-bar" style="width: 70.1%;"></div>';
+				outhtml = outhtml + '</div>';
+				outhtml = outhtml + '<div class="stats-desc">Better than last week (70.1%)</div>';
+				outhtml = outhtml + '</div>';
+				outhtml = outhtml + '</div>';
+				outhtml = outhtml + '</div>'; //Close div target
+				/*		<!-- end col-3 -->  */		
+				target = target + '1';
+				//interchange = target.ToString();
+				//string = 'target' + interchange;
+			});
           }
           $('#ghapidata').html(outhtml);
         } // end outputPageContent()
-		
-		//Jquery / json problem, can't iterate through all repos
-		/*var = repo_unit;
-		var commits_array;
-		$.each(repo_commits, function(index, value) {
-			repo_unit = repo_commits[index];
-			$.getJSON(repo_unit, function(json){
-				commits_array = json;
-			});*/
-		repo_commit = 'https://api.github.com/repos/'+username+'/CrossRoadsGroup/commits';
-        var repositories_2;
-		var target = 1;
-        $.getJSON(repo_commit, function(json){
-          repositories_2 = json;
-		  outputPageContent_2();
-        });  
-        function outputPageContent_2() {
-          if(repositories_2.length == 0) { outhtml2 = outhtml2 + '<p>No Commits!</p></div>'; }
-          else {        
-		  //Begin Output HTML of Commits JSON element via loop
-		  $.each(repositories_2, function(index) {
-				outhtml2 = outhtml2 + '<button type="button" class="btn btn-info" data-toggle="collapse" data-target="'+target+'">' + repositories_2[index]. + '</button>';
-				outhtml2 = outhtml2 + '<div id="'+target+'" class="collapse">';
-				/*	    <!-- begin col-3 -->  */			
-				//outhtml2 = outhtml2 + '<div class="col-md-3 col-sm-6">';
-				outhtml2 = outhtml2 + '<div class="widget widget-stats bg-green">';
-				outhtml2 = outhtml2 + '<div class="stats-icon stats-icon-lg"><i class="fa fa-globe fa-fw"></i></div>';
-				outhtml2 = outhtml2 + '<div class="stats-title">TODAYS VISITS</div>';
-				outhtml2 = outhtml2 + '<div class="stats-number">7,842,900</div>';
-				outhtml2 = outhtml2 + '<div class="stats-progress progress">';
-				outhtml2 = outhtml2 + '<div class="progress-bar" style="width: 70.1%;"></div>';
-				outhtml2 = outhtml2 + '</div>';
-				outhtml2 = outhtml2 + '<div class="stats-desc">Better than last week (70.1%)</div>';
-				outhtml2 = outhtml2 + '</div>';
-				outhtml2 = outhtml2 + '</div>';			
-				outhtml2 = outhtml2 + '</div>'; //Close div target
-				/*		<!-- end col-3 -->  */		
-				target++;
-			});
-		 }  //end statement
-		$('#ghapidata2').html(outhtml2);
-		}
-		
       } // end else statement
     }); // end requestJSON Ajax call
   }); // end click event handler
-
   
-/*$(function(){
-  $('#ghsubmitbtn').on('click', function(e){
-    e.preventDefault();
-    $('#ghapidata2').html('<div id="loader"><img src="assets/css/loader.gif" alt="loading..."></div>');
-	
-	)};
-)};*/
-  
-  
-  function requestJSON(url, callback) {
+  //Function shouldn't appear at document.ready
+   function requestJSON(url, callback) {
     $.ajax({
       url: url,
       complete: function(xhr) {
@@ -637,8 +578,6 @@ $(document).ready(function(){
       }
     });
   }
-  
-  
 /*});*/
 </script>		
 		
